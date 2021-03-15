@@ -1,5 +1,5 @@
 NAME: minimalexample
-LAST DEPLOYED: Mon Mar 15 15:35:37 2021
+LAST DEPLOYED: Mon Mar 15 16:16:23 2021
 NAMESPACE: default
 STATUS: pending-install
 REVISION: 1
@@ -161,7 +161,7 @@ metadata:
     app.kubernetes.io/instance: minimal-example
     app.kubernetes.io/part-of: minimal-example
 data:
-  application.properties: ""
+  application.properties: "\nservice.other.value=Override value"
 ---
 # Source: minimal/charts/sub1/templates/service.yaml
 apiVersion: v1
