@@ -1,0 +1,309 @@
+NAME: minimalexample
+LAST DEPLOYED: Mon Mar 15 15:35:37 2021
+NAMESPACE: default
+STATUS: pending-install
+REVISION: 1
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+affinity: {}
+autoscaling:
+  enabled: false
+  maxReplicas: 100
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+fullnameOverride: ""
+image:
+  pullPolicy: IfNotPresent
+  repository: nginx
+  tag: ""
+imagePullSecrets: []
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  - host: chart-example.local
+    paths: []
+  tls: []
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
+podSecurityContext: {}
+replicaCount: 1
+resources: {}
+securityContext: {}
+service:
+  port: 80
+  type: ClusterIP
+serviceAccount:
+  annotations: {}
+  create: true
+  name: ""
+sub1:
+  affinity: {}
+  autoscaling:
+    enabled: false
+    maxReplicas: 100
+    minReplicas: 1
+    targetCPUUtilizationPercentage: 80
+  cfg:
+    endpointPath: /sub1/original/path
+    otherValue: Override value
+  fullnameOverride: ""
+  global: {}
+  image:
+    pullPolicy: IfNotPresent
+    repository: nginx
+    tag: ""
+  imagePullSecrets: []
+  ingress:
+    annotations: {}
+    enabled: false
+    hosts:
+    - host: chart-example.local
+      paths: []
+    tls: []
+  nameOverride: ""
+  nodeSelector: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  replicaCount: 1
+  resources: {}
+  securityContext: {}
+  service:
+    port: 80
+    type: ClusterIP
+  serviceAccount:
+    annotations: {}
+    create: true
+    name: ""
+  tolerations: []
+tolerations: []
+
+HOOKS:
+---
+# Source: minimal/charts/sub1/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "minimalexample-sub1-test-connection"
+  labels:
+    helm.sh/chart: sub1-0.1.0
+    app.kubernetes.io/name: sub1
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['minimalexample-sub1:80']
+  restartPolicy: Never
+---
+# Source: minimal/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "minimalexample-test-connection"
+  labels:
+    helm.sh/chart: minimal-0.1.0
+    app.kubernetes.io/name: minimal
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['minimalexample:80']
+  restartPolicy: Never
+MANIFEST:
+---
+# Source: minimal/charts/sub1/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: minimalexample-sub1
+  labels:
+    helm.sh/chart: sub1-0.1.0
+    app.kubernetes.io/name: sub1
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: minimal/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: minimalexample
+  labels:
+    helm.sh/chart: minimal-0.1.0
+    app.kubernetes.io/name: minimal
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: minimal/charts/sub1/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minimal-sub1-config-map
+  labels:
+    app.kubernetes.io/name: minimal-example
+    app.kubernetes.io/component: minimal-example-sub1
+    app.kubernetes.io/instance: minimal-example
+    app.kubernetes.io/part-of: minimal-example
+data:
+  application.properties: ""
+---
+# Source: minimal/charts/sub1/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: minimalexample-sub1
+  labels:
+    helm.sh/chart: sub1-0.1.0
+    app.kubernetes.io/name: sub1
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: sub1
+    app.kubernetes.io/instance: minimalexample
+---
+# Source: minimal/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: minimalexample
+  labels:
+    helm.sh/chart: minimal-0.1.0
+    app.kubernetes.io/name: minimal
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: minimal
+    app.kubernetes.io/instance: minimalexample
+---
+# Source: minimal/charts/sub1/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minimalexample-sub1
+  labels:
+    helm.sh/chart: sub1-0.1.0
+    app.kubernetes.io/name: sub1
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sub1
+      app.kubernetes.io/instance: minimalexample
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sub1
+        app.kubernetes.io/instance: minimalexample
+    spec:
+      serviceAccountName: minimalexample-sub1
+      securityContext:
+        {}
+      containers:
+        - name: sub1
+          securityContext:
+            {}
+          image: "nginx:1.16.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+---
+# Source: minimal/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minimalexample
+  labels:
+    helm.sh/chart: minimal-0.1.0
+    app.kubernetes.io/name: minimal
+    app.kubernetes.io/instance: minimalexample
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: minimal
+      app.kubernetes.io/instance: minimalexample
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: minimal
+        app.kubernetes.io/instance: minimalexample
+    spec:
+      serviceAccountName: minimalexample
+      securityContext:
+        {}
+      containers:
+        - name: minimal
+          securityContext:
+            {}
+          image: "nginx:1.16.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+
+NOTES:
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=minimal,app.kubernetes.io/instance=minimalexample" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace default $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT

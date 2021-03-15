@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minimal-sub1-config-map
+  labels:
+    app.kubernetes.io/name: minimal-example
+    app.kubernetes.io/component: minimal-example-sub1
+    app.kubernetes.io/instance: minimal-example
+    app.kubernetes.io/part-of: minimal-example
+data:
+  application.properties: {{ tpl (.Files.Get "cfg/application.properties") . | quote }}
